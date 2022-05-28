@@ -1,5 +1,5 @@
 const { response, request } = require('express');
-const { StatusCodes } = require('http-status-codes');
+const { StatusCodes:code } = require('http-status-codes');
 const encriptar = require('../helpers/encrypt');
 const Usuario = require('../models/user');
 
@@ -16,7 +16,7 @@ module.exports = {
                 .limit( Number( limite ) )
         ]);
 
-        res.json({
+        res.status(code.OK).json({
             total, 
             usuarios
         })
@@ -31,7 +31,7 @@ module.exports = {
         //guardar en db
         await usuario.save();
     
-        res.json({
+        res.status(code.OK).json({
             usuario
         });
     },
@@ -45,21 +45,22 @@ module.exports = {
         
         const usuario = await Usuario.findByIdAndUpdate( id, resto );
         
-        res.json({
+        res.status(code.OK).json({
             usuario
         })
     },
     patch: (req = request, res = response ) => {
-        res.json({
+        res.status(code.OK).json({
             msg: 'patch API - controller'
         })
     },
     delete: async (req = request, res = response ) => {
         const { id } = req.params;
         const usuario = await Usuario.findByIdAndUpdate( id, { estado : false } );
-        
-        res.json({
-            usuario
+        const usuarioAutenticado = req.usuario;
+        res.status(code.OK).json({
+            usuario,
+            usuarioAutenticado
         });
     },
 }

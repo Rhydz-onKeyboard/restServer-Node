@@ -1,9 +1,10 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const userControllers = require('../controllers/users');
-const validarCampos = require('../middlewares/validarCampos');
+
 const validar = require('../helpers/dbValidator');
-const { ValidatorsImpl } = require('express-validator/src/chain');
+
+const middlewares = require('../middlewares')
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.route('/')
         check('correo', 'El correo no es valido').isEmail(),
         check('correo').custom( validar.emailExist ),
         check('rol').custom( validar.isRoleValid ),
-        validarCampos.validate
+        middlewares.validateInputs
         ], userControllers.post)
     
     .patch(userControllers.patch)
@@ -25,13 +26,16 @@ router.route('/:id')
         check('id', 'No es un ID valido').isMongoId(),
         check('id').custom( validar.userExistById ),
         check('rol').custom( validar.isRoleValid ),
-        validarCampos.validate
+        middlewares.validateInputs
         ], userControllers.put)
     
     .delete([
+        middlewares.jwt,
+        // middlewares.isAdminRole, //middleware por obligacion debe ser Admin rol
+        middlewares.hasRole('ADMIN_ROLE','VENTAS_ROLE'), // En los argumentos envio los roles que tendran el privilegio de eliminar usuarios
         check('id', 'No es un ID valido').isMongoId(),
         check('id').custom( validar.userExistById ),
-        validarCampos.validate
+        middlewares.validateInputs
         ], userControllers.delete)
 
 module.exports = router;
