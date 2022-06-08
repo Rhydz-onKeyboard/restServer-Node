@@ -31,13 +31,16 @@
             defer
         ></script>
         <script>
+            const url = window.location.hostname.includes('localhost')
+                ? 'http://localhost:8080/api/auth/google'
+                : 'https://node-restserver-exam.herokuapp.com/';
             function handleCredentialResponse(response) {
                 //Google token : ID_TOKEN
                 // console.log('id_token', response.credential);
                 const body = {
                     id_token: response.credential,
                 };
-                fetch('http://localhost:8080/api/auth/google', {
+                fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json',
