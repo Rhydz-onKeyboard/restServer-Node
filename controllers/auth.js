@@ -32,9 +32,8 @@ module.exports = {
                 });
             }
             // Generar el Jwt
-
             const token = await jwt.generar(usuario.id);
-            res.json({
+            res.status(code.OK).json({
                 usuario,
                 token,
             });
@@ -48,11 +47,36 @@ module.exports = {
     googleSignIn: async (req = request, res = response) => {
         const { id_token } = req.body;
         try {
-            const googleUser = await google.verify(id_token);
-            console.log(googleUser);
+            const {
+                name: nombre,
+                picture: img,
+                email: correo,
+            } = await google.verify(id_token);
+            let usuario = await Usuario.findOne({ correo });
+            if (!usuario) {
+                // Si el usuario no existe, tengo que crearlo
+                const data = {
+                    nombre,
+                    correo,
+                    password: ':P',
+                    img,
+                    google: true,
+                };
+                usuario = new Usuario(data);
+                await usuario.save();
+            }
+            // Si el usuario en DB
+            if (!usuario.estado) {
+                return res.status(code.UNAUTHORIZED).json({
+                    msg: 'Hable con el administrador, usuario bloqueado',
+                });
+            }
+            // Generar el Jwt
+            const token = await jwt.generar(usuario.id);
+
             res.status(code.OK).json({
-                msg: 'Todo bien',
-                id_token,
+                usuario,
+                token,
             });
         } catch (error) {
             res.status(code.BAD_REQUEST).json({
