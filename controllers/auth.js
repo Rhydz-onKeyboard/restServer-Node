@@ -4,7 +4,6 @@ const Usuario = require('../models/user');
 const jwt = require('../helpers/generarJwt');
 const { StatusCodes: code } = require('http-status-codes');
 const google = require('../helpers/googleVerify');
-const { json } = require('express/lib/response');
 
 module.exports = {
     login: async (req = request, res = response) => {

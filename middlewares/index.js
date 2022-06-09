@@ -1,10 +1,10 @@
-const { validate: validateInputs } = require('../middlewares/validarCampos');
-const { validate: jwt } = require('../middlewares/validarJwt');
-const { hasRole, isAdminRole } = require('../middlewares/validarRol');
+const { validate: validateInputs } = require('./validarCampos');
+const { validate: jwt } = require('./validarJwt');
+const { hasRole, isAdminRole } = require('./validarRol');
 
 module.exports = {
     validateInputs,
     jwt,
-    hasRole, 
-    isAdminRole
-}
+    hasRole,
+    isAdminRole,
+};
